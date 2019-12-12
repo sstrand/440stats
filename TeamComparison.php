@@ -191,7 +191,7 @@
         <?php
             //Create a denominator by adding both values, then divide the values by the denominator.
             //Use php's round function to get a whole number
-            for($counter = 5; $counter < count($categories); $counter++) {
+            for($counter = 5; $counter < 25; $counter++) {
                 $denom = intval($row1[$counter]) + intval($row2[$counter]);
 
                 //If $denom is zero, that means both values are zero. If that is the case,
