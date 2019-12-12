@@ -3,7 +3,6 @@
 <?php 
     include_once("config.php");
 
-    //If the variable 'pos' is not set, give it a default value.
     if(!isset($_GET["pos"])) {
         $position = "QB";
     } else {
@@ -29,14 +28,13 @@
         $position2 =  strtoupper($arr[3]);
         
         //If the positions do not match, send an error and do not query the database to get the stats.
-        //The select boxes only populate with one type of position to select, so this should not matter.
         if($position1 != $position2) {
             $errorMessage = "Please select two players that play the same position";
             $displayStats = false;
         } else {
+            //Separate SQL queries to get the entire row for the two players
             $displayStats = true;
 
-            //Separate SQL queries to get the entire row for the two players
             $player1SQL = mysqli_query($conn, 
                 "SELECT $position1.*, teams.* 
                  FROM $position1 
@@ -73,10 +71,11 @@
     }
 ?>
 
-
 <html>
     <head>
         <?php include('bootstrap.php'); ?>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>
 
         <style type = "text/css">
             .navbar-team-color-primary {
@@ -91,6 +90,7 @@
             a:hover {
                 color: rgba(<?php echo($secondaryRGB1) ?>, <?php echo($secondaryRGB2) ?>, <?php echo($secondaryRGB3) ?>, 1);
             }
+
             .row {
                 text-align: center;
                 padding-bottom: 40px;
@@ -150,48 +150,47 @@
 
     <body>
         <?php include_once('Header.php'); ?>
+        <span></span>
+        <div class="container">
 
-            <div class="container">
+        <div class = "row">
+          <div class="container">
+            <div class="row justify-content-md-center yearList">
+              <div class="col col-lg-1 ">
+                <?php if($position == "QB") echo '<a href="PlayerComparison.php?pos=QB" class="text-success">QB</a>';
+                      else echo '<a href="PlayerComparison.php?pos=QB" class="text-black-50">QB</a>'; ?>
+              </div>
+              <div class="col col-lg-1">
+              <?php if($position == "RB") echo '<a href="PlayerComparison.php?pos=RB" class="text-success">RB</a>';
+                      else echo '<a href="PlayerComparison.php?pos=RB" class="text-black-50">RB</a>'; ?>
+              </div>
+              <div class="col col-lg-1">
+              <?php if($position == "WR") echo '<a href="PlayerComparison.php?pos=WR" class="text-success">WR</a>';
+                      else echo '<a href="PlayerComparison.php?pos=WR" class="text-black-50">WR</a>'; ?>
+              </div>
+              <div class="col col-lg-1">
+              <?php if($position == "TE") echo '<a href="PlayerComparison.php?pos=TE" class="text-success">TE</a>';
+                      else echo '<a href="PlayerComparison.php?pos=TE" class="text-black-50">TE</a>'; ?>
+              </div>
+              <div class="col col-lg-1">
+              <?php if($position == "ST") echo '<a href="PlayerComparison.php?pos=ST" class="text-success">ST</a>';
+                      else echo '<a href="PlayerComparison.php?pos=ST" class="text-black-50">ST</a>'; ?>
+              </div>
+              <div class="col col-lg-1">
+              <?php if($position == "LB") echo '<a href="PlayerComparison.php?pos=LB" class="text-success">LB</a>';
+                      else echo '<a href="PlayerComparison.php?pos=LB" class="text-black-50">LB</a>'; ?>
+              </div>
+              <div class="col col-lg-1">
+              <?php if($position == "DB") echo '<a href="PlayerComparison.php?pos=DB" class="text-success">DB</a>';
+                      else echo '<a href="PlayerComparison.php?pos=DB" class="text-black-50">DB</a>'; ?>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                <div class = "row">
-                    <div class="container">
-                        <div class="row justify-content-md-center yearList">
-                            <!--Links to select the player position. When clicked, the page is reloaded with the position as a
-                                parameter and the select boxes are loaded accordingly.-->
-                            <div class="col col-lg-1 ">
-                            <?php if($position == "QB") echo '<a href="PlayerComparison.php?pos=QB" class="text-success">QB</a>';
-                                    else echo '<a href="PlayerComparison.php?pos=QB" class="text-black-50">QB</a>'; ?>
-                            </div>
-                            <div class="col col-lg-1">
-                            <?php if($position == "RB") echo '<a href="PlayerComparison.php?pos=RB" class="text-success">RB</a>';
-                                    else echo '<a href="PlayerComparison.php?pos=RB" class="text-black-50">RB</a>'; ?>
-                            </div>
-                            <div class="col col-lg-1">
-                            <?php if($position == "WR") echo '<a href="PlayerComparison.php?pos=WR" class="text-success">WR</a>';
-                                    else echo '<a href="PlayerComparison.php?pos=WR" class="text-black-50">WR</a>'; ?>
-                            </div>
-                            <div class="col col-lg-1">
-                            <?php if($position == "TE") echo '<a href="PlayerComparison.php?pos=TE" class="text-success">TE</a>';
-                                    else echo '<a href="PlayerComparison.php?pos=TE" class="text-black-50">TE</a>'; ?>
-                            </div>
-                            <div class="col col-lg-1">
-                            <?php if($position == "ST") echo '<a href="PlayerComparison.php?pos=ST" class="text-success">ST</a>';
-                                    else echo '<a href="PlayerComparison.php?pos=ST" class="text-black-50">ST</a>'; ?>
-                            </div>
-                            <div class="col col-lg-1">
-                            <?php if($position == "LB") echo '<a href="PlayerComparison.php?pos=LB" class="text-success">LB</a>';
-                                    else echo '<a href="PlayerComparison.php?pos=LB" class="text-black-50">LB</a>'; ?>
-                            </div>
-                            <div class="col col-lg-1">
-                            <?php if($position == "DB") echo '<a href="PlayerComparison.php?pos=DB" class="text-success">DB</a>';
-                                    else echo '<a href="PlayerComparison.php?pos=DB" class="text-black-50">DB</a>'; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-            <!-- Select boxes for the two players to comapre. These will be loaded with only one player position at a time-->
             <form method="post" name="playerCompare">
+
                 <div class="form-row">
                     <div class="col">
                         <select name='player1' id="player1">
@@ -220,12 +219,12 @@
                     <button type="submit" name="playerSubmit" class="btn btn-primary">Submit</button>
                 </div>
             </form>
-             <!-- Displays an error is the two selected players do not play the same position (which should not happen) -->
-            <span class="text-danger"><?php if (isset($errorMessage)) { echo $errorMessage; } ?></span>
+            <span class="text-danger"><?php if (isset($errorMessage)) { echo $errorMessage; } ?></span> <!-- Displays an error is the two selected players do not play the same position -->
         </div>
 
-        <!-- Stat comparison charts. Only display these if the two names were selected and submitted -->
+
         <div class="container">
+            <!-- Only display the graphs/data is the team and year form has been submitted -->
             <?php
                 //Only display the comparrison if the submit button was pressed and there are no errors
                 if (isset($_POST['playerSubmit']) && $displayStats) {
@@ -246,13 +245,14 @@
 
 
             <?php
-                /* This is the results for comparing two players. Since the players are of the same position, the stats
+                /* This is the resultsfor comparing two players. Since the players are of the same position, the stats
                  * can be compared directly. For each stat, a progress bar is used with the percentage of the total
                  * combinded stat that player has.
                 */
 
+
                 //Create a denominator by adding both values, then divide the values by the denominator.
-                //Use php's round function to get a whole number. This is to get a ratio for both player stats.
+                //Use php's round function to get a whole number
                 for($counter = 5; $counter < count($categories); $counter++) {
                     $denom = intval($row1[$counter]) + intval($row2[$counter]);
 
@@ -267,23 +267,124 @@
                     }
             ?>
             
-            <div class="d-flex justify-content-center"><h3 style=> <?php echo $categories[$counter]; ?> </h3></div>
-            
-            <div class="progress team-bars" style="">
-                <div class="progress-bar results-team-color-primary" role="progressbar" style="width:<?php echo $num1; ?>%">
-                    <?php echo $row1[$counter]; ?>
-                </div>
-                <div class="progress-bar results-divider" role="progressbar" style="width:.1%"></div>
+                    <div class="d-flex justify-content-center"><h3 style=> <?php echo $categories[$counter]; ?> </h3></div>
+                    
+                    <div class="progress team-bars" style="">
+                        <div class="progress-bar results-team-color-primary" role="progressbar" style="width:<?php echo $num1; ?>%">
+                            <?php echo $row1[$counter]; ?>
+                        </div>
+                        <div class="progress-bar results-divider" role="progressbar" style="width:.1%"></div>
 
-                <div class="progress-bar results-team-color-secondary" role="progressbar" style="width:<?php echo $num2; ?>%">
-                    <?php echo $row2[$counter]; ?>
-                </div>
-            </div>
-            
+                        <div class="progress-bar results-team-color-secondary" role="progressbar" style="width:<?php echo $num2; ?>%">
+                            <?php echo $row2[$counter]; ?>
+                        </div>
+                    </div>
             <?php
+
                     }
-                }
+                
             ?>
         </div>
+
+        <div style="margin: 0 auto; width:800px; height:400px;">
+        <div class = "row display-4">Comparison Chart</div>
+            <canvas id="LineChart"></canvas>
+        </div>
+
+    <script>
+       var CHART = document.getElementById("LineChart");
+
+                                // Customize: https://www.chartjs.org/docs/latest/charts/line.html
+
+                                
+
+    let LineChart = new Chart (CHART, {
+    type: 'line',
+    data: data = {
+        labels: [
+
+        <? for($counter = 5; $counter < count($categories); $counter++) {
+            ?> " <?echo($categories[$counter]) ?> ", <?
+        }
+
+        ?>
+        ],
+        datasets: [
+            {
+                label: '<?php echo $firstName1 . ' ' . $lastName1 ?>',
+                fill: false,
+                lineTension: 0,
+                backgroundColor: "rgba(<?php echo($row1["primaryRGB1"]) ?>,<?php echo($row1["primaryRGB2"]) ?>,<?php echo($row1["primaryRGB3"]) ?>,.4)", //only occurs when fill = true
+                borderColor: "rgba(<?php echo($row1["primaryRGB1"]) ?>,<?php echo($row1["primaryRGB2"]) ?>,<?php echo($row1["primaryRGB3"]) ?>,1)",
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rbga(75,192,192,1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                pointHoverBorderColor: "rgba(220,220.220,1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: [
+
+                <? for($counter = 5; $counter < count($categories); $counter++) {
+                        echo($row1[$counter]) ?>, <?
+
+                }
+
+                ?>
+                
+                ],
+            },
+            {
+                label: '<?php echo $firstName2 . ' ' . $lastName2 ?>',
+                fill: false,
+                lineTension: 0,
+                backgroundColor: "rgba(<?php echo($row2["primaryRGB1"]) ?>,<?php echo($row2["primaryRGB2"]) ?>,<?php echo($row2["primaryRGB3"]) ?>,0.4)",
+                borderColor: "rgba(<?php echo($row2["primaryRGB1"]) ?>,<?php echo($row2["primaryRGB2"]) ?>,<?php echo($row2["primaryRGB3"]) ?>,1)",
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rbga(75,72,192,1)",
+                pointBackgroundColor: '#fff',
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgba(75,72,192,1)",
+                pointHoverBorderColor: "rgba(220,220.220,1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: [
+
+                    <? for($counter = 5; $counter < count($categories); $counter++) {
+                        echo($row2[$counter]) ?>, <?
+                    }
+
+                    ?>
+                    ],
+                }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+})
+    </script>
+
+<? } ?>
+
     </body>
 </html>
