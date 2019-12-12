@@ -3,7 +3,7 @@
 <?php 
 
     include_once("config.php");
-
+    //Query the DB to get all team info for display. This does not include team stats, only general info.
     $teamInfo = mysqli_query($conn, "SELECT * FROM teams WHERE Id >= 0;");
 
     if (isset($_POST['teamSubmit'])) {
@@ -12,6 +12,7 @@
         $year1 = $_POST['year1'];
         $year2 = $_POST['year2'];
 
+        //Two separate queries for each team. This will get all the stats for both teams.
         $sql1 = "SELECT * FROM teamstats WHERE Id = '$team1Id' AND Season = $year1";
         $results1 = mysqli_query($conn, $sql1);
         $row1 = mysqli_fetch_array($results1);
@@ -20,6 +21,7 @@
         $results2 = mysqli_query($conn, $sql2);
         $row2 = mysqli_fetch_array($results2);
 
+        //Get a list of all the column names (each stat) for the teams.
         $sqlCol = "SELECT column_name FROM information_schema.columns WHERE table_name='teamstats'";
         $resultsCol = mysqli_query($conn, $sqlCol);
         $categories = array();
@@ -40,21 +42,18 @@
         $teamColorResults2 = mysqli_query($conn, $teamColorSql2);
         $teamColorRow2 = mysqli_fetch_array($teamColorResults2);
 
-
     }
-
-
 ?>
+
 
 
 <html>
     <head>
         <?php include('bootstrap.php'); ?>
 
-
         <style type = "text/css">
             .navbar-team-color-primary {
-                    background: rgba(<?php echo($primaryRGB1) ?>,<?php echo($primaryRGB2) ?>,<?php echo($primaryRGB3) ?>,1);
+                background: rgba(<?php echo($primaryRGB1) ?>,<?php echo($primaryRGB2) ?>,<?php echo($primaryRGB3) ?>,1);
             }
             .navbar-team-color-secondary {
                 background: rgba(<?php echo($secondaryRGB1) ?>, <?php echo($secondaryRGB2) ?>, <?php echo($secondaryRGB3) ?>, 1);
@@ -100,12 +99,11 @@
             }
 
         </style>
-
     </head>
 
     <body>
-        <?php include_once('Header.php'); ?>
 
+        <?php include_once('Header.php'); ?>
 
         <div class="container">
             </br>
@@ -175,6 +173,7 @@
             if (isset($_POST['teamSubmit'])) {
         ?>
 
+
         <div class="row justify-content-between">
             <div class="col-4">
                 <img src="<?php echo 'img//logos//' .$row1["Name"]. '.png'?>" alt="Team One logo" height="100" width="150"></img></br>
@@ -189,26 +188,24 @@
         </div>
 
 
-
         <?php
-                //Create a denominator by adding both values, then divide the values by the denominator.
-                //Use php's round function to get a whole number
-                for($counter = 5; $counter < 25; $counter++) {
-                    $denom = intval($row1[$counter]) + intval($row2[$counter]);
+            //Create a denominator by adding both values, then divide the values by the denominator.
+            //Use php's round function to get a whole number
+            for($counter = 5; $counter < 25; $counter++) {
+                $denom = intval($row1[$counter]) + intval($row2[$counter]);
 
-                    //If $denom is zero, that means both values are zero. If that is the case,
-                    //set both sides of the progress bar to 50%
-                    if(!$denom == 0) {
-                        $num1 = round((intval($row1[$counter]) / $denom) * 100, 0);
-                        $num2 = round((intval($row2[$counter]) / $denom) * 100, 0);
-                    } else {
-                        $num1 = 50;
-                        $num2 = 50;
-                    }
+                //If $denom is zero, that means both values are zero. If that is the case,
+                //set both sides of the progress bar to 50%
+                if(!$denom == 0) {
+                    $num1 = round((intval($row1[$counter]) / $denom) * 100, 0);
+                    $num2 = round((intval($row2[$counter]) / $denom) * 100, 0);
+                } else {
+                    $num1 = 50;
+                    $num2 = 50;
+                }
         ?>
         
                 <div class="d-flex justify-content-center"><h3 style=> <?php echo $categories[$counter]; ?> </h3></div>
-                
                 <div class="progress team-bars" style="">
                     <div class="progress-bar results-team-color-primary" role="progressbar" style="width:<?php echo $num1; ?>%">
                         <?php echo $row1[$counter]; ?>
@@ -220,17 +217,10 @@
                     </div>
                 </div>
         
-
-
         <?php
                 }
             }
         ?>
-
-
         </div>
-
-
     </body>
-    
 </html>
